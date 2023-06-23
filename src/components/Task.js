@@ -5,42 +5,45 @@ export default function Task() {
   const [items, setItems] = useState(['orange', 'mango'])
   const [itemName, setItemsName] = useState();
   const [errormsg, setErrormsg] = useState();
+  const [EditInput, setEditInput] = useState();
+  const [currentUpdateItem, setCurrentUpdateItem] = useState();
   const addBtn = useRef()
-  
+  const disableUpdateBtn = useRef()
 
-  const HandleItemValue = (e) => {  
-     
-      
-      if((e.target.value).trim()==''){
-        addBtn.current.setAttribute('disabled',true);
 
-      }else{
-        addBtn.current.removeAttribute('disabled');
+  const HandleItemValue = (e) => {
 
-      }
-      setItemsName(e.target.value);
-      setErrormsg('')
+
+    if ((e.target.value).trim() == '') {
+      addBtn.current.setAttribute('disabled', true);
+
+    } else {
+      addBtn.current.removeAttribute('disabled');
+
+    }
+    setItemsName(e.target.value);
+    setErrormsg('')
   }
   //Item add into list when click '+' button
   const AddItem = () => {
-    
+
     //check existing item in list
     if (items.indexOf(itemName) === -1) {
       setItems(olditems => [...olditems, itemName.toLowerCase()]) //copy elements
       setItemsName('')
 
     } else {
-      setErrormsg(firstCap(itemName)+" is already added")
+      setErrormsg(firstCap(itemName) + " is already added")
     }
 
-    addBtn.current.setAttribute('disabled',true);
+    addBtn.current.setAttribute('disabled', true);
 
 
   }
 
   //item add into list when press submit button
   const EnterkeyHandle = (e) => {
-    if (e.keyCode == 13 && (itemName.trim())!='') {
+    if (e.keyCode == 13 && (itemName) !== '') {
       AddItem()
     }
   }
@@ -51,6 +54,45 @@ export default function Task() {
     temp.splice(indx, 1)
     setItems(temp)
     setErrormsg('')
+
+  }
+
+  //edit  item 
+  const editItem = (indx) => {
+    setCurrentUpdateItem(indx)
+    setErrormsg('')
+  }
+
+  //Get Edit value
+  const HandleEditInput = (e) => {
+    setErrormsg('')
+    setEditInput(e.target.value)
+    if ((e.target.value).trim() == '') {
+      disableUpdateBtn.current.setAttribute('disabled', true);
+    } else {
+      disableUpdateBtn.current.removeAttribute('disabled');
+    }
+
+  }
+
+  //update item
+  const updateItem = (indx) => {
+    let tempItem = [...items]
+    let edtVal = (EditInput ?? items[indx]).toLowerCase()
+    console.log(edtVal)
+    tempItem.splice(indx, 1)
+    if (tempItem.indexOf(edtVal) === -1) {
+      let temp = [...items]
+      temp[indx] = edtVal
+      setItems(temp)
+      setCurrentUpdateItem(null)
+      setEditInput(null)
+      
+
+    } else {
+      setErrormsg(firstCap(edtVal) + " is already added")
+
+    }
 
   }
 
@@ -82,10 +124,24 @@ export default function Task() {
                 {items.map((obj, indx) => {
                   return (
                     <tr>
-                      <td><span>{firstCap(obj)}</span></td>
-                      <td><button className='btn btn-danger' onClick={() =>
-                        deleteItem(indx)}>Delete</button>
-                        <button className='btn btn-info ml-3'>Edit</button></td>
+                      <td>
+                        {(currentUpdateItem == indx) ? (<input type="text" className='form-control'
+                          onChange={HandleEditInput}
+                          value={EditInput ?? firstCap(obj)}></input>)
+                          : (<span>{firstCap(obj)}</span>)}
+                      </td>
+                      <td>
+
+                        {(currentUpdateItem == indx) ? (
+                          <button className='btn btn-success mr-3 ' onClick={() => updateItem(indx)} ref={disableUpdateBtn}>Update</button>
+                        ) : (
+                          <button className='btn btn-info mr-3 ' onClick={() => editItem(indx)}>Edit</button>
+                        )}
+
+                        <button className='btn btn-danger' onClick={() =>
+                          deleteItem(indx)}>Delete</button>
+
+                      </td>
 
                     </tr>
                   )
