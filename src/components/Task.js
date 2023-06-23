@@ -7,6 +7,8 @@ export default function Task() {
   const [errormsg, setErrormsg] = useState();
   const [EditInput, setEditInput] = useState();
   const [currentUpdateItem, setCurrentUpdateItem] = useState();
+  const [searchVal, setSearchVal] = useState();
+  const [searchData, setSearchData] = useState(null);
   const addBtn = useRef()
   const disableUpdateBtn = useRef()
 
@@ -14,36 +16,30 @@ export default function Task() {
   const HandleItemValue = (e) => {
 
 
-    if ((e.target.value).trim() == '') {
+    if ((e.target.value).trim() === '') {
       addBtn.current.setAttribute('disabled', true);
-
     } else {
       addBtn.current.removeAttribute('disabled');
-
     }
     setItemsName(e.target.value);
     setErrormsg('')
+    setSearchData(null)
   }
   //Item add into list when click '+' button
   const AddItem = () => {
-
     //check existing item in list
-    if (items.indexOf(itemName) === -1) {
+    if (items.indexOf(itemName.toLowerCase()) === -1) {
       setItems(olditems => [...olditems, itemName.toLowerCase()]) //copy elements
       setItemsName('')
-
     } else {
       setErrormsg(firstCap(itemName) + " is already added")
     }
-
     addBtn.current.setAttribute('disabled', true);
-
-
   }
 
   //item add into list when press submit button
   const EnterkeyHandle = (e) => {
-    if (e.keyCode == 13 && (itemName) !== '') {
+    if (e.keyCode === 13 && (itemName) !== '') {
       AddItem()
     }
   }
@@ -54,7 +50,6 @@ export default function Task() {
     temp.splice(indx, 1)
     setItems(temp)
     setErrormsg('')
-
   }
 
   //edit  item 
@@ -67,12 +62,12 @@ export default function Task() {
   const HandleEditInput = (e) => {
     setErrormsg('')
     setEditInput(e.target.value)
-    if ((e.target.value).trim() == '') {
+    if ((e.target.value).trim() === '') {
       disableUpdateBtn.current.setAttribute('disabled', true);
     } else {
+
       disableUpdateBtn.current.removeAttribute('disabled');
     }
-
   }
 
   //update item
@@ -87,7 +82,6 @@ export default function Task() {
       setItems(temp)
       setCurrentUpdateItem(null)
       setEditInput(null)
-      
 
     } else {
       setErrormsg(firstCap(edtVal) + " is already added")
@@ -96,6 +90,18 @@ export default function Task() {
 
   }
 
+  const HandeSearchInput = (e) => {
+    let itemArr = [...items]
+    let data = itemArr.filter(filterItem)
+    setSearchData(data)
+    function filterItem(itemlist) {
+      if (itemlist.indexOf(searchVal) != -1) {
+        return itemlist
+      }
+    }
+    
+
+  }
 
 
   return (
@@ -112,6 +118,9 @@ export default function Task() {
             </div>
           </div>
           <div className='card-body'>
+            <div className='w-50 mb-3'>
+              <input type='text' className='form-control' value={(searchVal=='')?firstCap(searchVal):null} onKeyUp={HandeSearchInput} onChange={(e)=>setSearchVal((e.target.value).toLowerCase())} placeholder='Search Item'></input>
+            </div>
             <table className='table table-striped '>
               <thead>
                 <tr>
@@ -121,18 +130,18 @@ export default function Task() {
 
               </thead>
               <tbody>
-                {items.map((obj, indx) => {
+                {(searchData ?? items).reverse().map((obj, indx) => {
                   return (
                     <tr>
                       <td>
-                        {(currentUpdateItem == indx) ? (<input type="text" className='form-control'
+                        {(currentUpdateItem === indx) ? (<input type="text" className='form-control'
                           onChange={HandleEditInput}
                           value={EditInput ?? firstCap(obj)}></input>)
                           : (<span>{firstCap(obj)}</span>)}
                       </td>
                       <td>
 
-                        {(currentUpdateItem == indx) ? (
+                        {(currentUpdateItem === indx) ? (
                           <button className='btn btn-success mr-3 ' onClick={() => updateItem(indx)} ref={disableUpdateBtn}>Update</button>
                         ) : (
                           <button className='btn btn-info mr-3 ' onClick={() => editItem(indx)}>Edit</button>
