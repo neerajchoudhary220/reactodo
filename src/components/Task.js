@@ -14,14 +14,15 @@ export default function Task() {
 
 
   const HandleItemValue = (e) => {
-
-
-    if ((e.target.value).trim() === '') {
-      addBtn.current.setAttribute('disabled', true);
-    } else {
-      addBtn.current.removeAttribute('disabled');
-    }
     setItemsName(e.target.value);
+
+    let item = itemName;
+    console.log(item)
+    // if (itemName === '') {
+    //   addBtn.current.setAttribute('disabled', true);
+    // } else {
+    //   addBtn.current.removeAttribute('disabled');
+    // }
     setErrormsg('')
     setSearchData(null)
   }
@@ -39,6 +40,7 @@ export default function Task() {
 
   //item add into list when press submit button
   const EnterkeyHandle = (e) => {
+
     if (e.keyCode === 13 && (itemName) !== '') {
       AddItem()
     }
@@ -99,7 +101,7 @@ export default function Task() {
         return itemlist
       }
     }
-    
+
 
   }
 
@@ -119,7 +121,7 @@ export default function Task() {
           </div>
           <div className='card-body'>
             <div className='w-50 mb-3'>
-              <input type='text' className='form-control' value={(searchVal=='')?firstCap(searchVal):null} onKeyUp={HandeSearchInput} onChange={(e)=>setSearchVal((e.target.value).toLowerCase())} placeholder='Search Item'></input>
+              <input type='text' className='form-control' value={(searchVal == '') ? firstCap(searchVal) : null} onKeyUp={HandeSearchInput} onChange={(e) => setSearchVal((e.target.value).toLowerCase())} placeholder='Search Item'></input>
             </div>
             <table className='table table-striped '>
               <thead>
