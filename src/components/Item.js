@@ -212,10 +212,6 @@ export default function Item() {
             }
         }
 
-
-
-
-
     }
     function allitemlist() {
 
@@ -275,6 +271,9 @@ export default function Item() {
         }else{
             FilterList(null)
         }
+
+        
+
 
     }
 

@@ -20,8 +20,4 @@ export const Itemlist = () => {
         }
     ]
         
-    
-
-
-
 }
